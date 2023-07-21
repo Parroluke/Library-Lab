@@ -42,7 +42,7 @@
 			"type": "script",
 			"language": "javascript",
 			"uuid": "dcc249ff-63c7-44ee-9c82-e5a205c947f7",
-			"entry": "scripts/main.js",
+			"entry": "scripts/server/index.js",
 			"version": [
 				1,
 				0,
@@ -53,7 +53,7 @@
 	"dependencies": [
 		{
 			"module_name": "@minecraft/server",
-			"version": "1.0.0-beta"
+			"version": "1.4.0-beta"
 		},
 		{
 			"module_name": "@minecraft/server-gametest",
@@ -61,7 +61,7 @@
 		},
 		{
 			"module_name": "@minecraft/server-ui",
-			"version": "1.0.0-beta"
+			"version": "1.2.0-beta"
 		},
 		{
 			"module_name": "@minecraft/server-admin",

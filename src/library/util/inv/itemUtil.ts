@@ -1,4 +1,4 @@
-import { ItemDurabilityComponent, ItemStack } from "@minecraft/server"
+import { ItemDurabilityComponent, ItemLockMode, ItemStack } from "@minecraft/server"
 
 /**
  * 아이템 세팅 클래스
@@ -30,10 +30,7 @@ export class ItemUtil {
         let loreItem = this.item
         loreItem.setLore(lore)
         return loreItem
-    }
-    
-
-    
+    } 
 
     /**
      * 아이템의 이름을 바꿉니다.
@@ -45,6 +42,7 @@ export class ItemUtil {
         nameItem.nameTag = nameTag
         return nameItem
     }
+
     /**
      * 아이템의 내구도를 바꿉니다.
      * @param durability
@@ -56,5 +54,15 @@ export class ItemUtil {
         dura.damage = durability;
         return item
     } 
-    
+
+    /**
+     * 아이템의 잠금 모드를 바꿉니다.
+     * @param lockmode 바꿀 아이템 모드
+     * @returns 바뀐 아이템
+     */
+    setLockMode(lockMode: ItemLockMode) {
+        let item = this.item;
+        item.lockMode = lockMode;
+        return item
+    }
 }
