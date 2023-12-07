@@ -1,61 +1,133 @@
-import { DynamicPropertiesDefinition, EntityType, system, world } from "@minecraft/server"
+import { Entity, world } from "@minecraft/server";
 
-interface wVkey {key: string, type:'boolean' | 'number' | 'string'}
-interface enVkey {key: string, type:'boolean' | 'number' | 'string', entity: EntityType}
+//같은 이름의 DB를 생성하지 않도록 확인하기 위한 배열
+let DBlist:string[] = [];
 
-class Database {
+/** DB를 Map의 형태로 입출력하며 worldDynamicProperty에 저장해줍니다. */
+export class worldDB {
 
-    /*** 월드 변수*/
-    public worldV: wVkey[] = [];
-    /**엔티티 변수 */
-    public entityV: enVkey[] = [];
+    /** DB 이름 */
+    readonly name: string;
 
-    constructor() {
-            world.afterEvents.worldInitialize.subscribe((e)=>{
-                //worldV register
-                const wV = new DynamicPropertiesDefinition()
-                this.worldV.forEach((v)=>{
-                   
-                    if(v.type=="boolean") wV.defineBoolean(v.key)
-                    if(v.type=="number") wV.defineNumber(v.key)
-                    if(v.type=="string") wV.defineString(v.key,400)
-    
-                })
-                //entityV register
-                this.entityV.forEach((v)=>{
-                    const enV = new DynamicPropertiesDefinition()
-                    if(v.type=="boolean") enV.defineBoolean(v.key)
-                    if(v.type=="number") enV.defineNumber(v.key)
-                    if(v.type=="string") enV.defineString(v.key,400)
-                    e.propertyRegistry.registerEntityTypeDynamicProperties(enV,v.entity)
-                })
-                
-                e.propertyRegistry.registerWorldDynamicProperties(wV)
-            })    
+    /** DB 변수 */
+    protected data: Map<string, any> = new Map();
+
+    /**
+     * DB를 생성합니다.
+     * @param name DB 이름
+     */
+    constructor(name: string) {
+        // 같은 이름의 DB가 있는지 확인
+        if(DBlist.includes(name)) throw new Error("There is DB with same name. import original DB variable or make new DB with another name.");
+        DBlist.push(name);
+
+        this.name = name;
+        this.load();
     }
 
     /**
-     * 월드 변수를 등록합니다.
-     * @param key 변수 이름
-     * @param type 변수 유형
+     * 데이터베이스에 값을 지정합니다.
+     * @param key 데이터 키
+     * @param value 데이터 값
      */
-    addWorldV(key:string, type:'boolean' | 'number' | 'string') {
-        const v: wVkey = {key:key,type:type}
-        this.worldV.push(v)
+    set(key: string | Entity, value: any): void {
+        const stringKey = this.getStringKey(key);
+        this.data.set(stringKey, value);
+        this.save();
     }
 
     /**
-     * 엔티티별 변수를 등록합니다.
-     * @param key 변수 이름
-     * @param type 변수 유형
-     * @param entity 엔티티 타입
+     * 데이터베이스에서 값을 가져옵니다.
+     * @param key 데이터 키
+     * @returns 데이터 키의 값
      */
-    addEntityV(key:string, type:'boolean' | 'number' | 'string', entity: EntityType) {
-        const v: enVkey = {key:key,type:type,entity:entity}
-        this.entityV.push(v)
+    get(key: string | Entity): any {
+        const stringKey = this.getStringKey(key);
+        if(this.has(key)) return this.data.get(stringKey);
+        else return false;
+        
+    }
+
+    /**
+     * 데이터베이스에서 키와 값을 삭제합니다.
+     * @param key 데이터 키
+     */
+    delete(key: string | Entity): void {
+        const stringKey = this.getStringKey(key);
+        if(!this.has(stringKey)) return;
+        this.data.delete(stringKey);
+        this.save();
+    }
+
+    /**
+     * 데이터베이스에서 해당 키의 값 존재 여부를 알려줍니다.
+     * @param key 
+     * @returns 데이터 키의 값 존재 여부
+     */
+    has(key: string | Entity): boolean {
+        const stringKey = this.getStringKey(key);
+        return this.data.has(stringKey)
+    }
+
+    /**
+     * 데이터의 모든 키들을 출력합니다.
+     * @returns 모든 데이터 키
+     */
+    keys(): string[] {
+        return [...this.data.keys()]
+    }
+
+    /**
+     * 데이터베이스의 모든 값들을 출력합니다.
+     * @returns 모든 데이터 값
+     */
+    values(): any[] {
+        return [...this.data.values()]
+    }
+
+    /**
+     * 데이터베이스의 모든 키를 삭제합니다.
+     */
+    clear(): void {
+        world.setDynamicProperty(this.name, "None");
+    }
+
+    /**
+     * data Map을 worldDynamicProperty에 저장합니다.
+     */
+    protected save(): void {
+        // Map 형태의 자료는 JSON 변환이 불가하므로 자료를 먼저 [[key1, value1], [key2, value2]...] 형태의 배열로 변환
+        const MapToArray = Array.from(this.data);
+        world.setDynamicProperty(this.name, JSON.stringify(MapToArray));
+    }
+
+    /**
+     * worldDynamicProperty에서 data를 로드합니다.
+     */
+    protected load(): void {
+        //DB가 본래 있었었는지 확인(없다면 새로 만들어진 것이므로 load X)
+        if(world.getDynamicProperty(this.name)) {
+            // [[key1, value1], [key2, value2]...] 의 형태로 이루어진 배열을 Map으로 변환
+            const getData = JSON.parse(world.getDynamicProperty(this.name) as string) as [string, any][];
+            let ArrayToMap: Map<string, any> = new Map();
+            for (const i of getData) {
+                ArrayToMap.set(i[0],i[1])
+            }
+            this.data = ArrayToMap;
+        }
+    }
+
+    /**
+     * Entity type의 key를 string으로 변환시켜줍니다.(Entity.id)
+     * @param key 변환시킬 key
+     * @returns string으로 변환된 key
+     */
+    protected getStringKey(key: string | Entity): string {
+        if(key instanceof Entity) return key.id;
+        else return key;
     }
 }
-/** 
- * 월드의 데이터베이스
- */
-export const database = new Database()
+
+export function clearALLDB() {
+    world.clearDynamicProperties();
+}

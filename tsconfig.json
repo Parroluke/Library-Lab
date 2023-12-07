@@ -12,8 +12,6 @@
         "allowJs": true
     },
     "include": [
-        "src",
-        "src/library/*",
-        "node_modules/@minecraft/server/index.d.ts"
+        "src"
     ]
 }
