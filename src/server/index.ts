@@ -1,6 +1,6 @@
 import { Entity, EntityScaleComponent, ItemStack, MinecraftDimensionTypes, Player, system, world } from "@minecraft/server";
 import { clearALLDB, worldDB } from "../library/build/databaseBuilder";
-
+world.sendMessage('aa')
 
 world.sendMessage('started')
 
