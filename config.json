@@ -1,7 +1,9 @@
 {
 	"type": "minecraftBedrock",
 	"name": "Library_Lab",
-	"namespace": "Parrolib",
+
+	"namespace": "parrolib",
+
 	"authors": [
 		"Parroluke"
 	],

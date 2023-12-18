@@ -4,13 +4,21 @@ import { Entity, world } from "@minecraft/server";
 let DBlist:string[] = [];
 
 /** DB를 Map의 형태로 입출력하며 worldDynamicProperty에 저장해줍니다. */
+<<<<<<< HEAD
 export class worldDB {
+=======
+export class worldDB<K> {
+>>>>>>> 2767d2a (Update)
 
     /** DB 이름 */
     readonly name: string;
 
     /** DB 변수 */
+<<<<<<< HEAD
     protected data: Map<string, any> = new Map();
+=======
+    protected data: Map<string, K> = new Map();
+>>>>>>> 2767d2a (Update)
 
     /**
      * DB를 생성합니다.
@@ -93,12 +101,28 @@ export class worldDB {
     }
 
     /**
+<<<<<<< HEAD
      * data Map을 worldDynamicProperty에 저장합니다.
      */
     protected save(): void {
         // Map 형태의 자료는 JSON 변환이 불가하므로 자료를 먼저 [[key1, value1], [key2, value2]...] 형태의 배열로 변환
         const MapToArray = Array.from(this.data);
         world.setDynamicProperty(this.name, JSON.stringify(MapToArray));
+=======
+     * Map data를 string 형태로 변환시킵니다.
+     * @returns string으로 변환된 Map
+     */
+    toString(): string {
+        // Map 형태의 자료는 JSON 변환이 불가하므로 자료를 먼저 [[key1, value1], [key2, value2]...] 형태의 배열로 변환
+        const MapToArray = Array.from(this.data);
+        return JSON.stringify(MapToArray)
+    }
+    /**
+     * data Map을 worldDynamicProperty에 저장합니다.
+     */
+    protected save(): void {
+        world.setDynamicProperty(this.name, this.toString());
+>>>>>>> 2767d2a (Update)
     }
 
     /**
@@ -108,8 +132,13 @@ export class worldDB {
         //DB가 본래 있었었는지 확인(없다면 새로 만들어진 것이므로 load X)
         if(world.getDynamicProperty(this.name)) {
             // [[key1, value1], [key2, value2]...] 의 형태로 이루어진 배열을 Map으로 변환
+<<<<<<< HEAD
             const getData = JSON.parse(world.getDynamicProperty(this.name) as string) as [string, any][];
             let ArrayToMap: Map<string, any> = new Map();
+=======
+            const getData = JSON.parse(world.getDynamicProperty(this.name) as string) as [string, K][];
+            let ArrayToMap: Map<string, K> = new Map();
+>>>>>>> 2767d2a (Update)
             for (const i of getData) {
                 ArrayToMap.set(i[0],i[1])
             }

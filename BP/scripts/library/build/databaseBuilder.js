@@ -80,12 +80,28 @@ export class worldDB {
         world.setDynamicProperty(this.name, "None");
     }
     /**
+<<<<<<< HEAD
      * data Map을 worldDynamicProperty에 저장합니다.
      */
     save() {
         // Map 형태의 자료는 JSON 변환이 불가하므로 자료를 먼저 [[key1, value1], [key2, value2]...] 형태의 배열로 변환
         const MapToArray = Array.from(this.data);
         world.setDynamicProperty(this.name, JSON.stringify(MapToArray));
+=======
+     * Map data를 string 형태로 변환시킵니다.
+     * @returns string으로 변환된 Map
+     */
+    toString() {
+        // Map 형태의 자료는 JSON 변환이 불가하므로 자료를 먼저 [[key1, value1], [key2, value2]...] 형태의 배열로 변환
+        const MapToArray = Array.from(this.data);
+        return JSON.stringify(MapToArray);
+    }
+    /**
+     * data Map을 worldDynamicProperty에 저장합니다.
+     */
+    save() {
+        world.setDynamicProperty(this.name, this.toString());
+>>>>>>> 2767d2a (Update)
     }
     /**
      * worldDynamicProperty에서 data를 로드합니다.
