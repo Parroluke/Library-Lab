@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@minecraft/server": "^1.9.0-beta.1.20.60-preview.24",
+    "@minecraft/server-admin": "^1.0.0-beta.1.20.40-preview.24",
+    "@minecraft/server-editor": "^0.1.0-beta.1.20.40-preview.24",
+    "@minecraft/server-gametest": "^1.0.0-beta.1.20.10-stable",
+    "@minecraft/server-net": "^1.0.0-beta.1.20.40-preview.24",
+    "@minecraft/server-ui": "^1.2.0-beta.1.20.40-preview.24",
+    "@minecraft/vanilla-data": "^1.20.40-preview.24",
+    "typescript": "^5.1.6"
+  }
+}
